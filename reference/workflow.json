@@ -1,0 +1,2089 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 500,
+        "output": "fields",
+        "fields": [
+          "body",
+          "isRead",
+          "sender",
+          "subject",
+          "importance",
+          "from",
+          "createdDateTime",
+          "categories",
+          "inferenceClassification",
+          "bodyPreview"
+        ],
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "foldersToInclude": [
+                "YOUR_INBOX_FOLDER_ID"
+              ],
+              "readStatus": "both",
+              "receivedAfter": "={{ $json[\"96ago\"] }}"
+            }
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -1728,
+        -1824
+      ],
+      "id": "55ee886d-d9eb-410a-9a17-80efbb4e3dd6",
+      "name": "Get Last 100 Incoming",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "YOUR_OUTLOOK_CREDENTIAL_ID",
+          "name": "Microsoft Outlook OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4bf608f1-cf44-4f26-b8bc-fb8f7ed5f1ca",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "=production",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "af6a3849-ddd1-42a2-a09b-76b56cf9d803",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "=order",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1440,
+        -1856
+      ],
+      "id": "285f45ea-0c41-4552-bc6c-4727848656c4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e7606549-a069-40fa-b4f1-cca36c8398ff",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "uploading",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "936174f7-e2d1-4231-b3f7-b3459692b7bb",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "order confirmation",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "a23725ff-5967-4c3e-912b-383e303028f5",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Thank you For your order",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "3f7c0581-be2a-4272-9967-ad4e5b3ccd7a",
+              "leftValue": "={{ $json.bodyPreview }}",
+              "rightValue": "cost",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "1c44f7fe-6f24-4ff1-89b4-ba57d667cd19",
+              "leftValue": "={{ $json.bodyPreview }}",
+              "rightValue": "quote",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "a96cc1a3-8fdf-4d66-94a0-4f7dcfaf3155",
+              "leftValue": "={{ $json.bodyPreview }}",
+              "rightValue": "abuse",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "faee1cf2-4ddd-45d4-a0d8-acf1c5aa6499",
+              "leftValue": "={{ $json.bodyPreview }}",
+              "rightValue": "buy",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "7dd724c2-171c-4f21-964c-1f4a7dd6703a",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "service",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "975c1621-4af0-4076-aa28-e91216b2fdac",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Undeliverable",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1136,
+        -1760
+      ],
+      "id": "0615b4b5-9f9d-4358-b631-72aa832fdf39",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -880,
+        -1840
+      ],
+      "id": "9a3afd47-9bd6-454b-b55a-ea5319955613",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        64,
+        -1840
+      ],
+      "id": "ed2a0e04-adb3-4d35-afa6-167bdf58558e",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const iso = item.json[\"96ago\"] || \"2025-10-31T19:00:11.951-04:00\";\n  const date = new Date(iso);\n  const timestamp = date.getTime();\n  const offsetMinutes = date.getTimezoneOffset();\n  const offsetHours = -offsetMinutes / 60;\n  item.json[\"timestamp_utc_ms\"] = timestamp;\n  item.json[\"timezone_offset_hours\"] = offsetHours;\n  item.json[\"timestamp_with_offset_ms\"] = timestamp + (offsetHours * 60 * 60 * 1000);\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2224,
+        -1792
+      ],
+      "id": "ac58a55c-723a-4ab9-a654-f55c06220fa2",
+      "name": "convert time to number"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH recent AS (\n  SELECT\n    id, session_id, created_at, message, lead_name, lead_phone,\n    CASE WHEN message->>'type' = 'human' THEN COALESCE(message->>'content','') ELSE '' END AS human_row_text,\n    COALESCE(\n      NULLIF(lead_phone, ''),\n      (SELECT regexp_replace((m)[1], '\\D', '', 'g') FROM regexp_matches(CASE WHEN message->>'type' = 'human' THEN COALESCE(message->>'content','') ELSE '' END, '(?:\\+?1[\\s\\-.]?)?(?:\\(?\\d{3}\\)?[\\s\\-.]?)\\d{3}[\\s\\-.]?\\d{4}', 'g') AS t(m) LIMIT 1)\n    ) AS row_extracted_phone,\n    COALESCE(\n      (SELECT (m)[1] FROM regexp_matches(CASE WHEN message->>'type' = 'human' THEN COALESCE(message->>'content','') ELSE '' END, '(?:\\bthis\\s+is|\\bi''?m|\\bi\\s+am|\\bthanks,\\s*|\\bregards,\\s*)([A-Z][a-z]+(?:\\s+[A-Z][a-z]+){1,2})', 'i') AS t(m) LIMIT 1),\n      (SELECT (m)[1] FROM regexp_matches(CASE WHEN message->>'type' = 'human' THEN COALESCE(message->>'content','') ELSE '' END, '\\b([A-Z][a-z]+(?:\\s+[A-Z][a-z]+){1,2})\\b', 'g') AS t(m) WHERE (m)[1] ~ '^[A-Z][a-z]+(?:\\s+[A-Z][a-z]+){1,2}$' LIMIT 1)\n    ) AS row_name_guess\n  FROM public.n8n_web_chat_histories\n  WHERE created_at >= NOW() - INTERVAL '96 hours'\n),\nagg AS (\n  SELECT session_id, MIN(created_at) AS first_message_at, MAX(created_at) AS last_message_at, COUNT(*) AS message_count,\n    jsonb_agg(jsonb_build_object('id', id, 'created_at', created_at, 'message', message, 'lead_name', lead_name, 'lead_phone', lead_phone, 'extracted_phone', row_extracted_phone, 'name_guess', row_name_guess) ORDER BY created_at) AS messages,\n    STRING_AGG(NULLIF(human_row_text, ''), ' ') AS human_text,\n    MAX(NULLIF(lead_name, '')) AS lead_name_any,\n    MAX(NULLIF(lead_phone, '')) AS lead_phone_any\n  FROM recent GROUP BY session_id\n),\nderived AS (\n  SELECT a.*,\n    (SELECT regexp_replace((m)[1], '\\D', '', 'g') FROM regexp_matches(COALESCE(a.human_text, ''), '(?:\\+?1[\\s\\-.]?)?(?:\\(?\\d{3}\\)?[\\s\\-.]?)\\d{3}[\\s\\-.]?\\d{4}', 'g') AS t(m) LIMIT 1) AS phone_from_text,\n    (SELECT (m)[1] FROM regexp_matches(COALESCE(a.human_text, ''), '(?:\\bthis\\s+is|\\bi''?m|\\bi\\s+am|\\bthanks,\\s*|\\bregards,\\s*)([A-Z][a-z]+(?:\\s+[A-Z][a-z]+){1,2})', 'i') AS t(m) LIMIT 1) AS name_from_text,\n    (SELECT (m)[1] FROM regexp_matches(COALESCE(a.human_text, ''), '\\b([A-Z][a-z]+(?:\\s+[A-Z][a-z]+){1,2})\\b', 'g') AS t(m) WHERE (m)[1] ~ '^[A-Z][a-z]+(?:\\s+[A-Z][a-z]+){1,2}$' LIMIT 1) AS bare_name_candidate\n  FROM agg a\n)\nSELECT d.session_id, d.message_count::text AS message_count,\n  to_char(d.first_message_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS first_message_at,\n  to_char(d.last_message_at  AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS last_message_at,\n  COALESCE(d.lead_name_any, d.name_from_text, d.bare_name_candidate) AS session_lead_name,\n  COALESCE(d.lead_phone_any, d.phone_from_text) AS session_lead_phone,\n  d.messages\nFROM derived d ORDER BY d.last_message_at DESC LIMIT 200;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1648,
+        -2048
+      ],
+      "id": "4596a0f6-9d39-4ad2-b4b8-4226aaf34a1b",
+      "name": "Get Chat History (last 48 hours)1",
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      },
+      "notes": "Only retrieve chat histories and messages created in the last 96 hours (4 days)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "af6a3849-ddd1-42a2-a09b-76b56cf9d803",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "=URGENT",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "fb48f10f-4fe5-4e42-848c-11429e99913f",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Chat",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1168,
+        -1552
+      ],
+      "id": "deae52a4-d7ec-4083-bad9-9b0992713050",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 500,
+        "output": "fields",
+        "fields": [
+          "body",
+          "isRead",
+          "sender",
+          "subject",
+          "importance",
+          "createdDateTime",
+          "categories",
+          "inferenceClassification",
+          "bodyPreview",
+          "sentDateTime"
+        ],
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "foldersToInclude": [
+                "YOUR_SENT_FOLDER_ID"
+              ],
+              "receivedAfter": "={{ $json[\"96ago\"] }}"
+            }
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        -1552
+      ],
+      "id": "a51efb9a-4d84-427b-9d8e-f99201d09888",
+      "name": "Get Last 48 Hours Sent",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "YOUR_OUTLOOK_CREDENTIAL_ID",
+          "name": "Microsoft Outlook OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT legacy_crm.dbo.Customers.InitialContact, legacy_crm.dbo.Customers.Email, legacy_crm.dbo.Customers.CustomerId\nFROM legacy_crm.dbo.Customers\n  WHERE legacy_crm.dbo.Customers.InitialContact = '{{$fromAI('name')}}'\n"
+      },
+      "type": "n8n-nodes-base.microsoftSqlTool",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        -1360
+      ],
+      "id": "60e17eda-c36c-45d5-8967-458ec7765a9a",
+      "name": "Lookup Customer By Full Name",
+      "credentials": {
+        "microsoftSql": {
+          "id": "YOUR_MSSQL_READONLY_CREDENTIAL_ID",
+          "name": "MS SQL Server (READ ONLY)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM legacy_crm.dbo.Customers\n  WHERE legacy_crm.dbo.Customers.Email = '{{$fromAI('email')}}'\n"
+      },
+      "type": "n8n-nodes-base.microsoftSqlTool",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        -1440
+      ],
+      "id": "a9534209-7f56-4269-b649-5f0c1ec7fc4d",
+      "name": "Lookup Customer By Email",
+      "credentials": {
+        "microsoftSql": {
+          "id": "YOUR_MSSQL_READONLY_CREDENTIAL_ID",
+          "name": "MS SQL Server (READ ONLY)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d1574d1-c9e0-491b-bd49-41eaab7b86da",
+              "name": "96ago",
+              "value": "={{ $now.minus(3, 'days') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2656,
+        -1776
+      ],
+      "id": "7b5ae56d-9fcf-4902-8b94-f844d933fc18",
+      "name": "Set 96 Hours Ago Date"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM legacy_crm.dbo.ContactHistory\nLEFT JOIN legacy_crm.dbo.Contacts\n  ON legacy_crm.dbo.Contacts.ContactID = legacy_crm.dbo.ContactHistory.ContactID\nWHERE legacy_crm.dbo.ContactHistory.ContactHistoryDate >= '{{ $json.timestamp_with_offset }}'"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -1488,
+        -1248
+      ],
+      "id": "1b485921-187d-407b-b0a5-047307d90233",
+      "name": "Retrieve Webtrac Contact Data",
+      "credentials": {
+        "microsoftSql": {
+          "id": "YOUR_WEBTRAC_MSSQL_CREDENTIAL_ID",
+          "name": "MS SQL Server (SA_WEBTRAC)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "mode": "list",
+          "value": "lostContact"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.emailAddress }}",
+            "channel": "={{ $json.channel }}",
+            "time": "={{ $json.contactTime_iso }}",
+            "fullName": "={{ $json.customerName }}",
+            "phone": "={{ $json.phoneNumber }}",
+            "missedSummary": "={{ $json.customerQuestion }}",
+            "aiAnalysis": "={{ $json.reasoning }}",
+            "status": "={{ $json.status }}",
+            "isResolved": false,
+            "confidenceScore": "={{ $json.confidenceScore }}",
+            "hasResponse": "={{ $json.hasResponse }}",
+            "followupMessage": "={{ $json.followUpMessage }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "isResolved",
+              "displayName": "isResolved",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "missedSummary",
+              "displayName": "missedSummary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fullName",
+              "displayName": "fullName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "aiAnalysis",
+              "displayName": "aiAnalysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "followupMessage",
+              "displayName": "followupMessage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hoursSinceContact",
+              "displayName": "hoursSinceContact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hasResponse",
+              "displayName": "hasResponse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "confidenceScore",
+              "displayName": "confidenceScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "replaceEmptyStrings": false
+        }
+      },
+      "id": "08c3b455-7e66-4fb3-90e1-aacdeba5516c",
+      "name": "Insert into lostContact2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2720,
+        -1728
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      },
+      "notes": "If isResolved is BOOLEAN, change mapping to {{ false }}. Consider a unique index on (email, time, channel)."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d1574d1-c9e0-491b-bd49-41eaab7b86da",
+              "name": "72ago",
+              "value": "={{ $now.minus(2, 'days') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2544,
+        -1504
+      ],
+      "id": "7d9d210e-8e5e-4c1d-9dab-a41fa595860b",
+      "name": "Set 72 Hours Ago Date1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nfor (const item of items) {\n  const data = item.json;\n  const parsed72ago = new Date(data[\"72ago\"]);\n  const utcDate = new Date(data.timestamp_utc_ms);\n  const offsetMs = data.timezone_offset_hours * 60 * 60 * 1000;\n  const utcIso = utcDate.toISOString();\n  const localIso = new Date(utcDate.getTime() + offsetMs).toISOString();\n  results.push({\n    json: {\n      original_72ago: data[\"72ago\"],\n      parsed_72ago: parsed72ago.toISOString(),\n      timestamp_utc: utcIso,\n      timestamp_with_offset: localIso,\n      timezone_offset_hours: data.timezone_offset_hours,\n    },\n  });\n}\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1856,
+        -1344
+      ],
+      "id": "6c25c4df-1347-4fde-b66b-bca09fd43cd6",
+      "name": "Convert to DateTime (72hrs)"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const iso = item.json[\"72ago\"] || \"2025-10-31T19:00:11.951-04:00\";\n  const date = new Date(iso);\n  const timestamp = date.getTime();\n  const offsetMinutes = date.getTimezoneOffset();\n  const offsetHours = -offsetMinutes / 60;\n  item.json[\"timestamp_utc_ms\"] = timestamp;\n  item.json[\"timezone_offset_hours\"] = offsetHours;\n  item.json[\"timestamp_with_offset_ms\"] = timestamp + (offsetHours * 60 * 60 * 1000);\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2176,
+        -1376
+      ],
+      "id": "c3f2342b-ac4d-4e15-a9aa-ea088e2fa8c2",
+      "name": "convert time to number1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be02ede3-f365-4461-ade8-6e12f035c2c4",
+              "name": "messageSubject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "e7d607c5-764a-4bc4-8777-6b5be450ee35",
+              "name": "isRead",
+              "value": "={{ $json.isRead }}",
+              "type": "string"
+            },
+            {
+              "id": "eface0b2-0572-4f05-aadf-e50cad0a0bac",
+              "name": "senderName",
+              "value": "={{ $json.sender.emailAddress.name }}",
+              "type": "string"
+            },
+            {
+              "id": "2c750a80-ed54-4e9d-a5e4-f8727b7b7ea3",
+              "name": "senderEmail",
+              "value": "={{ $json.sender.emailAddress.address }}",
+              "type": "string"
+            },
+            {
+              "id": "663ddf2f-e527-4f83-b5fc-03d5cd0fd007",
+              "name": "importance",
+              "value": "={{ $json.importance }}",
+              "type": "string"
+            },
+            {
+              "id": "1a73bd76-fe36-4207-921b-e9f95e228dfe",
+              "name": "messageBody",
+              "value": "={{ $json.bodyPreview }}",
+              "type": "string"
+            },
+            {
+              "id": "e5f96e5a-c996-4213-afb4-363b58c63a6b",
+              "name": "createdDateTime",
+              "value": "={{ $json.createdDateTime }}",
+              "type": "string"
+            },
+            {
+              "id": "df7b3b4d-a76f-454b-9e96-f95abfb9d8c3",
+              "name": "messageType",
+              "value": "email",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -576,
+        -1744
+      ],
+      "id": "3def4590-74ba-4755-b79f-191debadcaa1",
+      "name": "Set Sent Emails Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2afbc931-178c-44ee-9a55-7960c30ae5eb",
+              "name": "message_type",
+              "value": "chat_thread",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1024,
+        -2048
+      ],
+      "id": "5ecb4b0e-034d-4256-9b09-34e4da425932",
+      "name": "Set message_type For Chats"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be02ede3-f365-4461-ade8-6e12f035c2c4",
+              "name": "messageSubject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "eface0b2-0572-4f05-aadf-e50cad0a0bac",
+              "name": "senderName",
+              "value": "={{ $json.sender.emailAddress.name }}",
+              "type": "string"
+            },
+            {
+              "id": "2c750a80-ed54-4e9d-a5e4-f8727b7b7ea3",
+              "name": "senderEmail",
+              "value": "={{ $json.sender.emailAddress.address }}",
+              "type": "string"
+            },
+            {
+              "id": "663ddf2f-e527-4f83-b5fc-03d5cd0fd007",
+              "name": "importance",
+              "value": "={{ $json.importance }}",
+              "type": "string"
+            },
+            {
+              "id": "1a73bd76-fe36-4207-921b-e9f95e228dfe",
+              "name": "messageBody",
+              "value": "={{ $json.bodyPreview }}",
+              "type": "string"
+            },
+            {
+              "id": "e5f96e5a-c996-4213-afb4-363b58c63a6b",
+              "name": "createdDateTime",
+              "value": "={{ $json.createdDateTime }}",
+              "type": "string"
+            },
+            {
+              "id": "df7b3b4d-a76f-454b-9e96-f95abfb9d8c3",
+              "name": "messageType",
+              "value": "sent_emails",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -784,
+        -1600
+      ],
+      "id": "04260bc2-ecdd-44f1-86da-757c89441553",
+      "name": "Set All Sent Emails"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be02ede3-f365-4461-ade8-6e12f035c2c4",
+              "name": "messageSubject",
+              "value": "=Webtrac Contact Events",
+              "type": "string"
+            },
+            {
+              "id": "eface0b2-0572-4f05-aadf-e50cad0a0bac",
+              "name": "senderName",
+              "value": "={{ $json.FullName }}",
+              "type": "string"
+            },
+            {
+              "id": "2c750a80-ed54-4e9d-a5e4-f8727b7b7ea3",
+              "name": "senderEmail",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "1a73bd76-fe36-4207-921b-e9f95e228dfe",
+              "name": "messageBody",
+              "value": "={{ $json.ContactNotes }}",
+              "type": "string"
+            },
+            {
+              "id": "e5f96e5a-c996-4213-afb4-363b58c63a6b",
+              "name": "createdDateTime",
+              "value": "={{ $json.ContactHistoryDate }}",
+              "type": "string"
+            },
+            {
+              "id": "df7b3b4d-a76f-454b-9e96-f95abfb9d8c3",
+              "name": "messageType",
+              "value": "={{ $json.ContactType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        -1440
+      ],
+      "id": "a0991084-e21f-4735-9385-d5c462890c91",
+      "name": "Set All Sent crm"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0aa0c06a-6b33-48ee-bbab-db8cabb50e7c",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1200,
+        -1264
+      ],
+      "id": "cfe84cfd-8e6f-4e1d-b32b-343e68e0de8f",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "324e7373-05e2-4440-a55c-0560eadbf91f",
+              "leftValue": "={{ $json.messageType }}",
+              "rightValue": "Web",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "5975ea71-85ed-4cca-9f25-b33a473b8af8",
+              "leftValue": "={{ $json.messageType }}",
+              "rightValue": "Graphic",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "1e6dd0d8-4ec0-4873-a1f8-28b036127494",
+              "leftValue": "={{ $json.messageType }}",
+              "rightValue": "Order",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "7d3ce4bb-5684-4e6c-97dd-657e4044ba6c",
+              "leftValue": "={{ $json.messageBody }}",
+              "rightValue": "12,500",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "f9531849-cce2-4c89-b07f-975501f0b2ed",
+              "leftValue": "={{ $json.messageBody }}",
+              "rightValue": "embroidery proof",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -528,
+        -1472
+      ],
+      "id": "e2549651-de1a-4830-9b3c-fe742c59546f",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3376,
+        -1632
+      ],
+      "id": "0d989fb5-a1d4-4a85-b405-07ac17ac467b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst start = new Date(now.getTime() - 72*3600*1000);\nreturn [{ json: { nowISO: now.toISOString(), startISO: start.toISOString() } }];"
+      },
+      "id": "2b020934-4d2f-431c-b86b-fcfe245c0d02",
+      "name": "Compute 96h Window (UTC)1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3056,
+        -2080
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 500,
+        "output": "fields",
+        "fields": [
+          "body",
+          "isRead",
+          "sender",
+          "subject",
+          "importance",
+          "from",
+          "createdDateTime",
+          "categories",
+          "inferenceClassification",
+          "bodyPreview"
+        ],
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "foldersToInclude": [
+                "YOUR_INBOX_FOLDER_ID"
+              ],
+              "readStatus": "both",
+              "receivedAfter": "={{ $json.startISO }}"
+            }
+          }
+        },
+        "options": {}
+      },
+      "id": "00dd4582-245b-4d55-8387-c31c8e3f66d1",
+      "name": "Outlook Inbox (96h, filtered)1",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -2576,
+        -2912
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "YOUR_OUTLOOK_CREDENTIAL_ID",
+          "name": "Microsoft Outlook OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "source",
+              "value": "inbox",
+              "type": "string",
+              "id": "a1"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "03eab4de-f5c0-4e1b-90b6-5f7719112321",
+      "name": "Tag Source: inbox1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2288,
+        -2912
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 500,
+        "output": "fields",
+        "fields": [
+          "body",
+          "isRead",
+          "sender",
+          "subject",
+          "importance",
+          "createdDateTime",
+          "categories",
+          "inferenceClassification",
+          "bodyPreview",
+          "sentDateTime"
+        ],
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "foldersToInclude": [
+                "YOUR_SENT_FOLDER_ID"
+              ],
+              "receivedAfter": "={{ $json.startISO }}"
+            }
+          }
+        },
+        "options": {}
+      },
+      "id": "2f3f4a17-d3fe-4669-8034-4d5b3f52ade6",
+      "name": "Outlook Sent (96h)1",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -2560,
+        -2672
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "YOUR_OUTLOOK_CREDENTIAL_ID",
+          "name": "Microsoft Outlook OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "source",
+              "value": "sent",
+              "type": "string",
+              "id": "b1"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "b2d5a44d-bc3e-45cb-a687-fe424d7933b6",
+      "name": "Tag Source: sent1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2288,
+        -2640
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, session_id, created_at,\n       (message->>'type') AS msg_type,\n       (message->>'content') AS msg_content,\n       lead_name, lead_phone\nFROM public.n8n_web_chat_histories\nWHERE created_at >= '{{ $json.startISO }}'::timestamptz\nORDER BY created_at DESC;",
+        "options": {}
+      },
+      "id": "395b3565-0d77-4889-9dcf-3ca2c2140d91",
+      "name": "Chat (96h) → flat rows1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2592,
+        -2384
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "source",
+              "value": "chat",
+              "type": "string",
+              "id": "c1"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "75b1374e-a99a-41e5-9833-af8f312421c9",
+      "name": "Tag Source: chat1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2320,
+        -2384
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ch.ContactHistoryDate AS createdDateTime,\n       c.FullName AS FullName,\n       c.Email AS Email,\n       ch.ContactNotes AS ContactNotes,\n       ch.ContactType AS ContactType\nFROM legacy_crm.dbo.ContactHistory ch\nLEFT JOIN legacy_crm.dbo.Contacts c ON c.ContactID = ch.ContactID\nWHERE ch.ContactHistoryDate >= '{{ $json.startISO }}'\nORDER BY ch.ContactHistoryDate DESC;"
+      },
+      "id": "5bd83a39-ee49-4b75-963e-c1ce3750e469",
+      "name": "CRM Contact History (96h)1",
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -2608,
+        -2128
+      ],
+      "credentials": {
+        "microsoftSql": {
+          "id": "YOUR_WEBTRAC_MSSQL_CREDENTIAL_ID",
+          "name": "MS SQL Server (SA_WEBTRAC)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "source",
+              "value": "crm",
+              "type": "string",
+              "id": "d1"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "750d3160-9b89-4975-bba3-b5645a6950a4",
+      "name": "Tag Source: crm1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2240,
+        -2160
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "id": "9b97fdff-2fb1-4cba-bdef-f1b07a23918c",
+      "name": "Merge All Sources1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1952,
+        -2560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "function pick(obj, path) { try { return path.split('.').reduce((o,k)=> o?.[k], obj); } catch { return undefined; } }\n\nreturn items.map(({json}) => {\n  const src = json.source;\n  let fromName=null, fromEmail=null, body=null, subject=null, created=null, channel='Email', phone=null;\n\n  if (src === 'inbox') {\n    fromName  = pick(json, 'sender.emailAddress.name') ?? pick(json, 'from.emailAddress.name') ?? null;\n    fromEmail = (pick(json, 'sender.emailAddress.address') ?? pick(json, 'from.emailAddress.address') ?? '').toLowerCase() || null;\n    subject   = json.subject ?? null;\n    body      = json.bodyPreview ?? json.body ?? null;\n    created   = json.createdDateTime ?? null;\n    channel   = 'Email';\n  } else if (src === 'sent') {\n    fromName  = 'Your Company';\n    fromEmail = 'info@yourdomain.com';\n    subject   = json.subject ?? null;\n    body      = json.bodyPreview ?? json.body ?? null;\n    created   = json.sentDateTime ?? json.createdDateTime ?? null;\n    channel   = 'Email';\n  } else if (src === 'chat') {\n    fromName  = json.lead_name ?? null;\n    phone     = json.lead_phone ? String(json.lead_phone).replace(/\\D+/g,'') : null;\n    subject   = (json.msg_type === 'human' ? 'Chat inbound' : json.msg_type === 'ai' ? 'Chat AI reply' : 'Chat message');\n    body      = json.msg_content ?? null;\n    created   = json.created_at ?? null;\n    channel   = 'Chat';\n  } else if (src === 'crm') {\n    fromName  = json.FullName ?? null;\n    fromEmail = (json.Email || '').toLowerCase() || null;\n    subject   = json.ContactType ?? 'CRM Note';\n    body      = json.ContactNotes ?? null;\n    created   = json.createdDateTime ?? null;\n    channel   = 'CRM';\n  }\n\n  if (phone) {\n    if (phone.length === 10) phone = `+1${phone}`;\n    else if (phone.length === 11 && phone.startsWith('1')) phone = `+${phone}`;\n  }\n\n  const createdAtISO = created ? new Date(created).toISOString() : null;\n\n  return {\n    json: {\n      source: src, channel, fromName, fromEmail,\n      fromPhone: phone ?? null,\n      subject, body, createdAtISO,\n      _ts: createdAtISO ? Date.parse(createdAtISO) : null\n    }\n  };\n});"
+      },
+      "id": "bb4fefaa-4d82-4868-8bd1-34edecaf08df",
+      "name": "Normalize → Canonical Message1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        -2448
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const seen = new Set();\nconst out = [];\nfor (const {json} of items) {\n  const key = (json.fromEmail && `e:${json.fromEmail}`) ||\n              (json.fromPhone && `p:${json.fromPhone}`) ||\n              (json.fromName  && `n:${json.fromName.toLowerCase().trim()}`) || null;\n  if (!key) continue;\n  json.contactKey = key;\n  const day = json.createdAtISO ? json.createdAtISO.slice(0,10) : 'na';\n  const sig = `${key}|${(json.subject||'').toLowerCase()}|${day}|${json.channel}|${json.source}`;\n  if (seen.has(sig)) continue; seen.add(sig);\n  if (json._ts && (Date.now()-json._ts) > 96*3600*1000) continue;\n  out.push({ json });\n}\nreturn out;"
+      },
+      "id": "6df3b8f0-f984-4660-b364-8d1ec6befcc3",
+      "name": "Build Contact Key + Dedup1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1360,
+        -2416
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = items.map(i=>i.json);\nconst byKey = new Map();\nfor (const r of rows) {\n  const g = byKey.get(r.contactKey) || { contactKey: r.contactKey, msgs: [] };\n  g.msgs.push(r);\n  byKey.set(r.contactKey, g);\n}\nconst out = [];\nfor (const g of byKey.values()) {\n  const inbound = g.msgs.filter(m => {\n    if (m.channel === 'Email' && m.source === 'inbox') return true;\n    if (m.channel === 'Chat' && m.source === 'chat' && m.subject === 'Chat inbound') return true;\n    return false;\n  }).sort((a,b)=> (a._ts||0)-(b._ts||0));\n  if (!inbound.length) continue;\n  const first = inbound[0];\n  const horizon = (first._ts||0) + 96*3600*1000;\n  const followups = g.msgs.filter(m => {\n    const isFollow = (m.source === 'sent') || (m.channel === 'CRM') || (m.channel==='Chat' && m.source==='chat' && m.subject==='Chat AI reply');\n    return isFollow && m._ts != null && m._ts >= (first._ts||0) && m._ts <= horizon;\n  }).sort((a,b)=> (a._ts||0)-(b._ts||0));\n  const status = followups.length ? 'Response Sent' : 'No Response Yet';\n  const fu = followups[0];\n  out.push({ json: {\n    customerName: first.fromName || null,\n    emailAddress: first.fromEmail || null,\n    phoneNumber: first.fromPhone || null,\n    channel: first.channel,\n    originalMessage: first.subject || first.body || '(no preview)',\n    contactTime: first.createdAtISO,\n    status,\n    followUpMessage: fu ? (fu.subject || fu.body || null) : null,\n    followUpTime: fu ? fu.createdAtISO : null,\n    confidenceScore: followups.length ? 0.9 : 0.7,\n    reasoning: followups.length ? 'Found follow-up within 96 hours.' : 'No sent/CRM/AI reply found within 96 hours.'\n  }});\n}\nreturn out;"
+      },
+      "id": "578a8acc-34c2-4835-a724-681f4450c729",
+      "name": "Correlate: inbound vs follow-ups (96h)1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        -2416
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const hot = [/undeliverable/i, /proof/i, /quote|cost/i, /payment|visa|card/i, /abuse/i];\nreturn items.map(i => {\n  const s = `${i.json.originalMessage||''} ${i.json.followUpMessage||''}`;\n  i.json.priority = hot.some(rx => rx.test(s)) ? 'High' : 'Normal';\n  return i;\n});"
+      },
+      "id": "3a590382-9037-4450-9971-b7abf684f6c4",
+      "name": "Keyword Priority Classifier1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -896,
+        -2368
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.filter(i => i.json.status === 'No Response Yet');"
+      },
+      "id": "3bc53d62-c58a-457c-a973-bef2f53c17e1",
+      "name": "Only No Response Yet1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        -2288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "81a791bf-df5c-4fbd-870d-c4ca89c1bd04",
+              "leftValue": "={{ $json.originalMessage }}",
+              "rightValue": "order",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "662cc41b-12ab-43ee-9913-9fd0f14edd6e",
+              "leftValue": "={{ $json.originalMessage }}",
+              "rightValue": "production",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "298e6901-d98d-49f4-adf8-d6870ca0672c",
+              "leftValue": "={{ $json.originalMessage }}",
+              "rightValue": "uploading",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        -2144
+      ],
+      "id": "0b0f6f9d-b512-479b-8ec3-573e97ef80d1",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "options": {
+          "systemMessage": "You are an expert customer relations analyst and communication comparator. Your task is to analyze the incoming prompt data for incoming customer communications (chat threads, emails, outgoing emails, and CRM communications) and identify ALL unique contacts that may have been missed in follow-up responses within the last 96 hours.\n\n## INPUT DATA FORMAT\nYou will receive:\n1. Chat Threads - Array of chat session data with message history\n2. Incoming Emails - Array of customer email communications\n3. Outgoing Emails - Array of internal/external follow-up emails sent by your team\n4. CRM Communications - Array of internal/external follow-up notes sent by your team\n5. Timeframe Context - All communications are within the last 96 hours\n\n## RESPONSE FORMAT\nReturn your findings as a structured JSON object:\n{\n  \"analysis\": [\n    {\n      \"customerName\": \"Full Name of Customer (if available)\",\n      \"emailAddress\": \"Customer email (if available)\",\n      \"phoneNumber\": \"Customer phone (if available)\",\n      \"contactTime\": \"Timestamp of original contact (YYYY-MM-DDTHH:MM:SSZ)\",\n      \"channel\": \"Email/Chat/Both\",\n      \"originalMessage\": \"Summary of original customer message\",\n      \"status\": \"No Response Yet/Response Sent/Response Pending/Response Resolved\",\n      \"followUpMessage\": \"Summary of follow-up response (if any)\",\n      \"followUpTime\": \"Timestamp of follow-up response (if any)\",\n      \"confidenceScore\": 0.0,\n      \"reasoning\": \"Detailed explanation of your analysis\"\n    }\n  ],\n  \"summary\": {\n    \"totalContacts\": 0,\n    \"noResponse\": 0,\n    \"responseSent\": 0,\n    \"responsePending\": 0,\n    \"responseResolved\": 0\n  }\n}\n\n## IMPORTANT RULES\n1. Time window: 96 hours\n2. Match contacts by name, email, or phone (any one identifier)\n3. Confidence: High (0.8-1.0) = clear follow-up found; Medium (0.5-0.7) = partial match; Low (0.0-0.4) = no match\n4. Use Lookup tools when contact information is missing\n5. Return valid JSON only - no markdown outside the JSON structure\n6. Focus on No Response Yet status as highest priority"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        -1712
+      ],
+      "id": "613e312c-f831-4920-b451-cbddcb00defe",
+      "name": "AI Agent2",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        -1456
+      ],
+      "id": "08a7c9b7-6ee4-4cdd-93cf-6113d85ff57e",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function stripFences(s) {\n  if (typeof s !== 'string') return s;\n  const m = s.match(/```(?:json)?\\s*([\\s\\S]*?)```/i);\n  return m ? m[1].trim() : s.trim();\n}\nfunction safeParse(x) {\n  if (x == null) return {};\n  if (typeof x === 'object') return x;\n  if (typeof x !== 'string') return {};\n  const s = stripFences(x);\n  try { return JSON.parse(s); } catch { return {}; }\n}\nfunction toISO(s) {\n  if (!s) return null;\n  try {\n    if (s instanceof Date) return isNaN(s.getTime()) ? null : s.toISOString();\n    if (typeof s === 'number') { const d = new Date(s); return isNaN(d.getTime()) ? null : d.toISOString(); }\n    if (typeof s === 'string') {\n      const d = new Date(s);\n      if (!isNaN(d.getTime())) return d.toISOString();\n      if (!/[zZ]|[+\\-]\\d{2}:\\d{2}$/.test(s)) { const d2 = new Date(s + 'Z'); if (!isNaN(d2.getTime())) return d2.toISOString(); }\n    }\n  } catch {}\n  return null;\n}\nfunction firstDefined(...vals) { for (const v of vals) if (v !== undefined && v !== null && v !== '') return v; return undefined; }\nfunction num(x, fallback = 0) { const n = Number(x); return Number.isFinite(n) ? n : fallback; }\nfunction htmlToText(html) {\n  if (typeof html !== 'string') return html ?? null;\n  return html.replace(/<br\\s*\\/?>/gi,'\\n').replace(/<\\/p>/gi,'\\n').replace(/<style[\\s\\S]*?<\\/style>/gi,'').replace(/<script[\\s\\S]*?<\\/script>/gi,'').replace(/<[^>]+>/g,'').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/gi,\"'\").replace(/&quot;/gi,'\"').trim();\n}\nfunction pickContent(obj) {\n  const html = firstDefined(obj.body?.content, obj.htmlBody, obj.html);\n  const texty = firstDefined(obj.bodyPreview,obj.previewText,obj.snippet,obj.text,obj.body,obj.message,obj.content,obj.summary,obj.originalMessage,obj.followUpMessage);\n  const textFromHtml = html ? htmlToText(html) : null;\n  return firstDefined(texty, textFromHtml, obj.subject) ?? null;\n}\nfunction pickTimestamp(obj) {\n  return firstDefined(obj.created_at,obj.createdAt,obj.time,obj.date,obj.timestamp,obj.sent_at,obj.sentAt,obj.received_at,obj.receivedAt,obj.createdDateTime,obj.lastModifiedDateTime,obj.contactTime,obj.followUpTime,obj.first_message_at,obj.last_message_at);\n}\nfunction mapRole(val) {\n  if (!val) return null;\n  const s = String(val).toLowerCase();\n  if (['human','user','customer','incoming','inbound','from_customer'].includes(s)) return 'human';\n  if (['ai','assistant','agent','bot','outgoing','outbound','from_agent','system'].includes(s)) return 'ai';\n  return null;\n}\nfunction inferRole(o) {\n  const dir = firstDefined(o.direction, o.dir);\n  const inc = firstDefined(o.incoming, o.is_incoming, o.isIncoming);\n  if (dir) { const r = mapRole(dir); if (r) return r; }\n  if (inc === true) return 'human';\n  if (inc === false) return 'ai';\n  const r2 = mapRole(firstDefined(o.role, o.message?.type, o.sender_type));\n  if (r2) return r2;\n  if (o.from?.emailAddress || o.sender?.emailAddress || o.from_email) return 'human';\n  return null;\n}\nfunction computeBounds(explicitFirst, explicitLast, messages) {\n  let first = toISO(explicitFirst) || null;\n  let last = toISO(explicitLast) || null;\n  if (!first || !last) {\n    const times = messages.map(m => m.created_at).filter(Boolean).map(t => new Date(t).getTime()).filter(n => Number.isFinite(n)).sort((a,b) => a-b);\n    if (times.length) { if (!first) first = new Date(times[0]).toISOString(); if (!last) last = new Date(times[times.length-1]).toISOString(); }\n  }\n  return { first, last };\n}\nfunction looksLikeChat(rec) { return Array.isArray(rec?.messages) || String(firstDefined(rec.message_type,rec.messageType,rec.type,'')).toLowerCase() === 'chat_thread'; }\nfunction looksLikeEmail(rec) { const t = String(firstDefined(rec.message_type,rec.messageType,rec.type,'')).toLowerCase(); return t === 'email' || 'createdDateTime' in rec || 'bodyPreview' in rec || 'subject' in rec && ('from' in rec || 'sender' in rec || 'toRecipients' in rec || 'to' in rec); }\nfunction looksLikeSms(rec) { const t = String(firstDefined(rec.message_type,rec.messageType,rec.type,'')).toLowerCase(); return t === 'sms' || t === 'text' || ('direction' in rec && ('text' in rec || 'body' in rec)); }\nfunction looksLikePhone(rec) { const t = String(firstDefined(rec.message_type,rec.messageType,rec.type,'')).toLowerCase(); return t === 'phone' || t === 'call' || 'call_id' in rec || 'duration_seconds' in rec || 'caller_phone' in rec; }\nfunction looksLikeCrm(rec) { const t = String(firstDefined(rec.message_type,rec.messageType,rec.type,'')).toLowerCase(); return t === 'crm' || t === 'crm_event' || 'crm_thread_id' in rec || 'pipeline' in rec || 'stage' in rec; }\nfunction normalizeChatThread(rec) {\n  const msgsIn = Array.isArray(rec.messages) ? rec.messages : [];\n  const msgs = msgsIn.map(m => ({ id: m?.id ?? null, role: mapRole(m?.message?.type) ?? mapRole(m?.role) ?? inferRole(m), content: firstDefined(m?.message?.content, pickContent(m)), created_at: toISO(firstDefined(m?.created_at, pickTimestamp(m))), lead_name: firstDefined(m?.lead_name,m?.sender_name,m?.from_name) ?? null, lead_phone: firstDefined(m?.lead_phone,m?.sender_phone,m?.from_phone) ?? null, subject: m?.subject ?? null, channel: 'chat' }));\n  const { first, last } = computeBounds(rec.first_message_at, rec.last_message_at, msgs);\n  return { session_id: firstDefined(rec.session_id,rec.sessionId) ?? null, message_count: num(firstDefined(rec.message_count,rec.messageCount,msgs.length),msgs.length), first_message_at: first, last_message_at: last, lead: { name: firstDefined(rec.session_lead_name,rec.lead_name,rec.contact_name,rec.customerName) ?? null, phone: firstDefined(rec.session_lead_phone,rec.lead_phone,rec.contact_phone,rec.phoneNumber) ?? null, email: firstDefined(rec.email,rec.emailAddress) ?? null }, messages: msgs, message_type: firstDefined(rec.message_type,rec.messageType,rec.type,'chat_thread') };\n}\nfunction normalizeEmailLike(rec) {\n  const fromName = firstDefined(rec.from?.emailAddress?.name,rec.sender?.emailAddress?.name,rec.from_name,rec.senderName);\n  const fromAddr = firstDefined(rec.from?.emailAddress?.address,rec.sender?.emailAddress?.address,rec.from_email,rec.senderEmail);\n  const toField = firstDefined(rec.toRecipients,rec.to,rec.to_email,rec.toAddress,rec.recipients);\n  const content = pickContent(rec);\n  const msg = { id: firstDefined(rec.id,rec.message_id,rec.internetMessageId,rec.conversationId,rec.uuid) ?? null, role: inferRole(rec) ?? 'human', content, created_at: toISO(firstDefined(rec.createdDateTime,rec.sentDateTime,rec.receivedDateTime,rec.internalDate,rec.date,pickTimestamp(rec))), lead_name: firstDefined(rec.contact_name,rec.customerName,fromName) ?? null, lead_phone: firstDefined(rec.contact_phone,rec.phoneNumber,rec.from_phone) ?? null, subject: firstDefined(rec.subject,rec.messageSubject,rec.thread_subject) ?? null, from: fromAddr || rec.from || rec.from_email || null, to: toField || null, channel: 'email' };\n  const msgs = (msg.content || msg.created_at || msg.id || msg.subject || msg.from || msg.to) ? [msg] : [];\n  const { first, last } = computeBounds(rec.first_message_at, rec.last_message_at, msgs);\n  return { session_id: firstDefined(rec.session_id,rec.thread_id,rec.conversation_id,rec.conversationId) ?? null, message_count: msgs.length, first_message_at: first, last_message_at: last, lead: { name: firstDefined(rec.contact_name,rec.customerName,fromName) ?? null, phone: firstDefined(rec.contact_phone,rec.phoneNumber,rec.from_phone) ?? null, email: firstDefined(rec.email,rec.emailAddress,fromAddr) ?? null }, messages: msgs, message_type: firstDefined(rec.message_type,rec.messageType,rec.type,'email') };\n}\nfunction normalizeGeneric(rec) {\n  const msg = { id: firstDefined(rec.id,rec.uuid,rec.event_id) ?? null, role: inferRole(rec), content: pickContent(rec), created_at: toISO(pickTimestamp(rec)), lead_name: firstDefined(rec.lead_name,rec.contact_name,rec.customerName) ?? null, lead_phone: firstDefined(rec.lead_phone,rec.contact_phone,rec.phoneNumber) ?? null, subject: rec.subject ?? null, channel: firstDefined(rec.channel,rec.type,'generic') };\n  const msgs = (msg.content || msg.created_at || msg.id) ? [msg] : [];\n  const { first, last } = computeBounds(rec.first_message_at, rec.last_message_at, msgs);\n  return { session_id: firstDefined(rec.session_id,rec.thread_id,rec.conversation_id) ?? null, message_count: msgs.length, first_message_at: first, last_message_at: last, lead: { name: firstDefined(rec.contact_name,rec.customerName,rec.lead_name) ?? null, phone: firstDefined(rec.contact_phone,rec.phoneNumber,rec.lead_phone) ?? null, email: firstDefined(rec.email,rec.emailAddress) ?? null }, messages: msgs, message_type: firstDefined(rec.message_type,rec.messageType,rec.type,'generic') };\n}\nfunction normalizeRecord(rec) {\n  if (!rec || typeof rec !== 'object') return normalizeGeneric({});\n  if (looksLikeChat(rec)) return normalizeChatThread(rec);\n  if (looksLikeEmail(rec)) return normalizeEmailLike(rec);\n  if (looksLikeSms(rec)) return normalizeGeneric(rec);\n  if (looksLikePhone(rec)) return normalizeGeneric(rec);\n  if (looksLikeCrm(rec)) return normalizeGeneric(rec);\n  return normalizeGeneric(rec);\n}\nfunction extractRecords(inputJson) {\n  const raw = inputJson ?? {};\n  let data = safeParse(raw.preview) && Object.keys(safeParse(raw.preview)).length ? safeParse(raw.preview) : safeParse(raw.output) && Object.keys(safeParse(raw.output)).length ? safeParse(raw.output) : safeParse(raw);\n  if (typeof data === 'string') data = safeParse(data);\n  if (Array.isArray(data)) return data;\n  if (Array.isArray(data?.analysis)) return data.analysis;\n  return [data];\n}\nconst out = [];\nfor (const item of items) {\n  const records = extractRecords(item?.json);\n  for (const rec of records) {\n    const normalized = normalizeRecord(rec || {});\n    out.push({ json: { normalized, as_text: JSON.stringify(normalized, null, 2) } });\n  }\n}\nreturn out.length ? out : [{ json: { normalized: null, as_text: '' } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -1728
+      ],
+      "id": "fa7fcc15-53db-4508-8ecf-8fe0579a6c4b",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {
+          "includeBinaries": false
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -1744
+      ],
+      "id": "51f284eb-af0d-45f3-897e-65ec3c862a4e",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemma-3-12b-it",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -1312
+      ],
+      "id": "1f847166-b43e-4d57-8476-7784f8704f12",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "YOUR_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function stripCodeFence(s) {\n  if (typeof s !== 'string') return s;\n  let m = s.match(/```json\\s*([\\s\\S]*?)```/i);\n  if (m && m[1]) return m[1].trim();\n  m = s.match(/```\\s*([\\s\\S]*?)```/);\n  if (m && m[1]) return m[1].trim();\n  return s.trim();\n}\nfunction extractJsonCandidate(s) {\n  if (typeof s !== 'string') return s;\n  const stripped = stripCodeFence(s);\n  if (/^\\s*[\\{\\[]/.test(stripped)) return stripped;\n  const start = stripped.indexOf('{'); const end = stripped.lastIndexOf('}');\n  if (start !== -1 && end !== -1 && end > start) return stripped.slice(start, end+1);\n  return null;\n}\nfunction safeParse(x) {\n  if (x == null) return null;\n  if (typeof x === 'object') return x;\n  if (typeof x !== 'string') return null;\n  const cand = extractJsonCandidate(x);\n  if (!cand) return null;\n  try { return JSON.parse(cand); } catch (_e) {\n    const softened = cand.replace(/\\r\\n/g,'\\n').replace(/\\\\n/g,'\\n').replace(/\\\\\"/g,'\"');\n    try { return JSON.parse(softened); } catch (_e2) { return null; }\n  }\n}\nfunction nilIfEmpty(v) {\n  if (v == null) return null;\n  if (typeof v === 'string') { const t = v.trim(); if (!t) return null; if (['unknown','n/a','na'].includes(t.toLowerCase())) return null; return t; }\n  return v;\n}\nfunction toISOZ(s) {\n  if (!s) return null;\n  if (typeof s !== 'string') { const d = new Date(s); return isNaN(d.getTime()) ? null : d.toISOString(); }\n  const t = s.trim(); if (!t) return null;\n  let d = new Date(t); if (!isNaN(d.getTime())) return d.toISOString();\n  if (!/[zZ]|[+\\-]\\d{2}:\\d{2}$/.test(t)) { d = new Date(t+'Z'); if (!isNaN(d.getTime())) return d.toISOString(); }\n  return null;\n}\nfunction toMillis(iso) { if (!iso) return null; const ms = Date.parse(iso); return Number.isFinite(ms) ? ms : null; }\nfunction normalizePhone(p) {\n  if (p == null) return null; const s = String(p).trim(); if (!s) return null;\n  if (s.startsWith('+')) { const digits = '+' + s.slice(1).replace(/\\D+/g,''); return digits.length > 1 ? digits : null; }\n  const digits = s.replace(/\\D+/g,''); return digits || null;\n}\nfunction normalizeChannel(ch) {\n  const t = nilIfEmpty(ch); if (!t) return null; const c = t.toLowerCase();\n  if (c.startsWith('chat')) return 'Chat'; if (c.startsWith('email')) return 'Email';\n  if (c.startsWith('sms')) return 'SMS'; if (c.includes('phone')) return 'Phone';\n  return t.charAt(0).toUpperCase() + t.slice(1);\n}\nfunction boolHasResponse(status) { if (!status) return false; const s = String(status).toLowerCase(); return s.includes('response sent') || s.includes('resolved'); }\nconst out = [];\nfor (let i = 0; i < items.length; i++) {\n  const raw = items[i]?.json?.output ?? items[i]?.json ?? null;\n  const parsed = safeParse(raw);\n  if (!parsed || !parsed.analysis || !Array.isArray(parsed.analysis)) continue;\n  for (const row of parsed.analysis) {\n    const customerName = nilIfEmpty(row.customerName);\n    const emailAddress = nilIfEmpty(row.emailAddress);\n    const phoneNumber = normalizePhone(row.phoneNumber);\n    const channel = normalizeChannel(row.channel);\n    const customerQuestion = nilIfEmpty(row.originalMessage);\n    const contactTime_iso = toISOZ(row.contactTime);\n    const contactTime_ms = toMillis(contactTime_iso);\n    const followUpTime_iso = toISOZ(row.followUpTime);\n    const followUpTime_ms = toMillis(followUpTime_iso);\n    let confidenceScore = row.confidenceScore;\n    if (confidenceScore !== null && confidenceScore !== undefined) { const n = Number(confidenceScore); confidenceScore = Number.isFinite(n) ? n : null; } else { confidenceScore = null; }\n    const status = nilIfEmpty(row.status);\n    const followUpMessage = nilIfEmpty(row.followUpMessage);\n    const reasoning = nilIfEmpty(row.reasoning);\n    out.push({ json: { customerName, emailAddress, phoneNumber, channel, customerQuestion, followUpMessage, status, confidenceScore, reasoning, contactTime_iso, contactTime_ms, followUpTime_iso, followUpTime_ms, hasResponse: boolHasResponse(status), _sourceIndex: i } });\n  }\n}\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        -1760
+      ],
+      "id": "b72bb437-bb5e-4497-b744-7a46eeac4ef6",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e91edbdb-891a-488f-8fb9-762499ef265f",
+              "leftValue": "={{ $json.customerName }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2096,
+        -1840
+      ],
+      "id": "01fb8cd8-4540-4d08-8df9-56bdfb573ad5",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(({ json }) => {\n  if (json.confidenceScore != null) { json.confidenceScore = String(json.confidenceScore); }\n  return { json };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        -1712
+      ],
+      "id": "6ba9a20a-95f7-4ad2-b827-244cadbc8127",
+      "name": "Code in JavaScript5"
+    }
+  ],
+  "connections": {
+    "Get Last 100 Incoming": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Set Sent Emails Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert time to number": {
+      "main": [
+        [
+          {
+            "node": "Get Last 100 Incoming",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Chat History (last 48 hours)1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Last 48 Hours Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat History (last 48 hours)1": {
+      "main": [
+        [
+          {
+            "node": "Set message_type For Chats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Set All Sent Emails",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get Last 48 Hours Sent": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Customer By Full Name": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Customer By Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 96 Hours Ago Date": {
+      "main": [
+        [
+          {
+            "node": "convert time to number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Webtrac Contact Data": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 72 Hours Ago Date1": {
+      "main": [
+        [
+          {
+            "node": "convert time to number1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to DateTime (72hrs)": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Webtrac Contact Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convert time to number1": {
+      "main": [
+        [
+          {
+            "node": "Convert to DateTime (72hrs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Sent Emails Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set message_type For Chats": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set All Sent Emails": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Set All Sent crm": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Set All Sent crm",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ],
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set 96 Hours Ago Date",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set 72 Hours Ago Date1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Compute 96h Window (UTC)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute 96h Window (UTC)1": {
+      "main": [
+        [
+          {
+            "node": "Outlook Inbox (96h, filtered)1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Outlook Sent (96h)1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Chat (96h) → flat rows1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "CRM Contact History (96h)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outlook Inbox (96h, filtered)1": {
+      "main": [
+        [
+          {
+            "node": "Tag Source: inbox1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Source: inbox1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Sources1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outlook Sent (96h)1": {
+      "main": [
+        [
+          {
+            "node": "Tag Source: sent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Source: sent1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Sources1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Chat (96h) → flat rows1": {
+      "main": [
+        [
+          {
+            "node": "Tag Source: chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Source: chat1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Sources1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "CRM Contact History (96h)1": {
+      "main": [
+        [
+          {
+            "node": "Tag Source: crm1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Source: crm1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Sources1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge All Sources1": {
+      "main": [
+        [
+          {
+            "node": "Normalize → Canonical Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize → Canonical Message1": {
+      "main": [
+        [
+          {
+            "node": "Build Contact Key + Dedup1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Contact Key + Dedup1": {
+      "main": [
+        [
+          {
+            "node": "Correlate: inbound vs follow-ups (96h)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Correlate: inbound vs follow-ups (96h)1": {
+      "main": [
+        [
+          {
+            "node": "Keyword Priority Classifier1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword Priority Classifier1": {
+      "main": [
+        [
+          {
+            "node": "Only No Response Yet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only No Response Yet1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Insert into lostContact2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  }
+}
